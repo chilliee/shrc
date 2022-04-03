@@ -7,6 +7,7 @@ export REPOS_ROOT=${DEVEN_ROOT}/.repos
 export NINJA_VERSION="1.10.2"
 export CMAKE_VERSION="3.23.0"
 export NEOVIM_VERSION="0.6.1"
+export LUA_VERSION="5.4.4"
 
 if [[ ! -d "${DEVEN_ROOT}" ]]; then
     mkdir -p ${REPOS_ROOT} \
@@ -162,4 +163,34 @@ if [[  "$(which nvim)" == "" \
     make CMAKE_BUILD_TYPE=Release CMAKE_INSTALL_PREFIX=${UTILS_ROOT} && make install && \
 
     popd && rm -rf ${REPOS_ROOT}/neovim
+fi
+
+
+if [[  "$(which lua)" == "" \
+    || "$(which lua)" == "lua not found" \
+    || "$(lua -v)" != *"${LUA_VERSION}"* ]]; then
+
+    rm -rf ${UTILS_ROOT}/bin/lua* \
+           ${UTILS_ROOT}/include/lua*.h \
+           ${UTILS_ROOT}/include/lua*.hpp \
+           ${UTILS_ROOT}/lib/liblua.a \
+           ${UTILS_ROOT}/man/man1/lua*.1
+
+    if [[ "$(uname)" == "Linux" ]]; then
+        if [[ "$(cat /etc/os-release | grep '^NAME=')" == *"Debian"* ]]; then
+            sudo apt-get install -y curl libreadline-dev
+        fi
+    fi
+
+    curl -R -O -s http://www.lua.org/ftp/lua-${LUA_VERSION}.tar.gz && \
+    tar zxf lua-${LUA_VERSION}.tar.gz && rm lua-${LUA_VERSION}.tar.gz && \
+    pushd lua-${LUA_VERSION}
+
+    if [[ "$(uname)" == "Darwin" ]]; then
+        make macosx install INSTALL_TOP=${UTILS_ROOT}
+    elif [[ "$(uname)" == "Linux" ]]; then
+        make linux-readline install INSTALL_TOP=${UTILS_ROOT}
+    fi
+
+    popd && rm -rf lua-${LUA_VERSION}
 fi
