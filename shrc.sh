@@ -51,7 +51,9 @@ elif [[ "$(uname)" == "Linux" ]]; then
             __INSTALL_PREREQ="${__INSTALL_PREREQ} build-essential"
         fi
 
-        sudo apt-get install -y ${__INSTALL_PREREQ}
+        if [[ "${__INSTALL_PREREQ}" != "" ]]; then
+            sudo apt-get install -y ${__INSTALL_PREREQ}
+        fi
     fi
 fi
 
