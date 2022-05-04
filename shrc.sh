@@ -23,7 +23,24 @@ if [[ "$PATH" != *"${UTILS_ROOT}/bin"* ]]; then
     export PATH=${UTILS_ROOT}/bin:$PATH
 fi
 
-if [[ "$(uname)" == "Darwin" ]]; then
+
+OS=""
+if [[ "$OS" == "MacOS" ]]; then
+    OS="MacOS"
+elif [[ "$(uname)" == "Linux" ]]; then
+    if [[ "$(cat /etc/os-release | grep '^NAME=')" == *"Debian"*
+       || "$(cat /etc/os-release | grep '^NAME=')" == *"Ubuntu"* ]]; then
+        OS="Debian/Ubuntu"
+    fi
+fi
+
+if [[ "$OS" == "" ]]; then
+    echo "Unsupported OS!"
+    exit -1
+fi
+
+if [[ "$OS" == "MacOS" ]]; then
+
     if [[  "$(which brew)" == "" \
         || "$(which brew)" == "brew no found" ]]; then
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && \
@@ -33,29 +50,27 @@ if [[ "$(uname)" == "Darwin" ]]; then
         brew install python
     fi
 
-elif [[ "$(uname)" == "Linux" ]]; then
-    if [[ "$(cat /etc/os-release | grep '^NAME=')" == *"Debian"*
-       || "$(cat /etc/os-release | grep '^NAME=')" == *"Ubuntu"* ]]; then
+elif [[ "$OS" == "Debian/Ubuntu" ]]; then
 
-        if [[ "$(which git)" == "" \
-           || "$(which git)" == "git not found" ]]; then
-            __INSTALL_PREREQ="${__INSTALL_PREREQ} git"
-        fi
-
-        if [[ "$(which python3)" == ""  \
-           || "$(which python3)" == "python3 not found" ]]; then
-            __INSTALL_PREREQ="${__INSTALL_PREREQ} python3"
-        fi
-
-        if [[ "$(which gcc)" == ""  \
-           || "$(which gcc)" == "gcc not found" ]]; then
-            __INSTALL_PREREQ="${__INSTALL_PREREQ} build-essential"
-        fi
-
-        if [[ "${__INSTALL_PREREQ}" != "" ]]; then
-            sudo apt-get install -y ${__INSTALL_PREREQ}
-        fi
+    if [[ "$(which git)" == "" \
+        || "$(which git)" == "git not found" ]]; then
+        __INSTALL_PREREQ="${__INSTALL_PREREQ} git"
     fi
+
+    if [[ "$(which python3)" == ""  \
+        || "$(which python3)" == "python3 not found" ]]; then
+        __INSTALL_PREREQ="${__INSTALL_PREREQ} python3"
+    fi
+
+    if [[ "$(which gcc)" == ""  \
+        || "$(which gcc)" == "gcc not found" ]]; then
+        __INSTALL_PREREQ="${__INSTALL_PREREQ} build-essential"
+    fi
+
+    if [[ "${__INSTALL_PREREQ}" != "" ]]; then
+        sudo apt-get install -y ${__INSTALL_PREREQ}
+    fi
+
 fi
 
 
@@ -97,13 +112,8 @@ if [[  "$(which cmake)" == "" \
            ${UTILS_ROOT}/share/bash-completion/completions/cpack \
            ${UTILS_ROOT}/share/bash-completion/completions/ctest
     
-    if [[ "$(uname)" == "Linux" ]]; then
-        if [[ "$(cat /etc/os-release | grep '^NAME=')" == *"Debian"* 
-           || "$(cat /etc/os-release | grep '^NAME=')" == *"Ubuntu"* ]]; then
-            if [[ "$(apt list --installed | grep libssl-dev)" == "" ]]; then
-                sudo apt-get install -y libssl-dev
-            fi
-        fi
+    if [[ "$OS" == "Debian/Ubuntu" ]]; then
+        sudo apt-get install -y libssl-dev
     fi
     
     git clone --branch v${CMAKE_VERSION} https://gitlab.kitware.com/cmake/cmake ${REPOS_ROOT}/cmake && \
@@ -153,13 +163,10 @@ if [[  "$(which nvim)" == "" \
            ${UTILS_ROOT}/share/locale/zh_TW.UTF-8/LC_MESSAGES/nvim.mo \
            ${UTILS_ROOT}/share/nvim
     
-    if [[ "$(uname)" == "Darwin" ]]; then
+    if [[ "$OS" == "MacOS" ]]; then
         brew install libtool automake pkg-config gettext
-    elif [[ "$(uname)" == "Linux" ]]; then
-        if [[ "$(cat /etc/os-release | grep '^NAME=')" == *"Debian"*
-           || "$(cat /etc/os-release | grep '^NAME=')" == *"Ubuntu"* ]]; then
-            sudo apt-get install -y gettext libtool libtool-bin autoconf automake pkg-config unzip curl doxygen
-        fi
+    elif [[ "$OS" == "Debian/Ubuntu" ]]; then
+        sudo apt-get install -y gettext libtool libtool-bin autoconf automake pkg-config unzip curl doxygen
     fi
 
     git clone --branch v${NEOVIM_VERSION} https://github.com/neovim/neovim ${REPOS_ROOT}/neovim && \
@@ -181,18 +188,15 @@ if [[  "$(which lua)" == "" \
            ${UTILS_ROOT}/lib/liblua.a \
            ${UTILS_ROOT}/man/man1/lua*.1
 
-    if [[ "$(uname)" == "Linux" ]]; then
-        if [[ "$(cat /etc/os-release | grep '^NAME=')" == *"Debian"*
-           || "$(cat /etc/os-release | grep '^NAME=')" == *"Ubuntu"* ]]; then
-            sudo apt-get install -y curl libreadline-dev
-        fi
+    if [[ "$OS" == "Debian/Ubuntu" ]]; then
+        sudo apt-get install -y curl libreadline-dev
     fi
 
     curl -R -O -s http://www.lua.org/ftp/lua-${LUA_VERSION}.tar.gz && \
     tar zxf lua-${LUA_VERSION}.tar.gz && rm lua-${LUA_VERSION}.tar.gz && \
     pushd lua-${LUA_VERSION}
 
-    if [[ "$(uname)" == "Darwin" ]]; then
+    if [[ "$OS" == "MacOS" ]]; then
         make macosx install INSTALL_TOP=${UTILS_ROOT}
     elif [[ "$(uname)" == "Linux" ]]; then
         make linux-readline install INSTALL_TOP=${UTILS_ROOT}
