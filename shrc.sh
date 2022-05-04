@@ -5,8 +5,8 @@ export UTILS_ROOT=${DEVEN_ROOT}/.utils
 export REPOS_ROOT=${DEVEN_ROOT}/.repos
 
 export NINJA_VERSION="1.10.2"
-export CMAKE_VERSION="3.23.0"
-export NEOVIM_VERSION="0.6.1"
+export CMAKE_VERSION="3.23.1"
+export NEOVIM_VERSION="0.7.0"
 export LUA_VERSION="5.4.4"
 
 if [[ ! -d "${DEVEN_ROOT}" ]]; then
