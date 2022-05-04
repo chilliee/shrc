@@ -34,7 +34,8 @@ if [[ "$(uname)" == "Darwin" ]]; then
     fi
 
 elif [[ "$(uname)" == "Linux" ]]; then
-    if [[ "$(cat /etc/os-release | grep '^NAME=')" == *"Debian"* ]]; then
+    if [[ "$(cat /etc/os-release | grep '^NAME=')" == *"Debian"*
+       || "$(cat /etc/os-release | grep '^NAME=')" == *"Ubuntu"* ]]; then
 
         if [[ "$(which git)" == "" \
            || "$(which git)" == "git not found" ]]; then
@@ -97,7 +98,8 @@ if [[  "$(which cmake)" == "" \
            ${UTILS_ROOT}/share/bash-completion/completions/ctest
     
     if [[ "$(uname)" == "Linux" ]]; then
-        if [[ "$(cat /etc/os-release | grep '^NAME=')" == *"Debian"* ]]; then
+        if [[ "$(cat /etc/os-release | grep '^NAME=')" == *"Debian"* 
+           || "$(cat /etc/os-release | grep '^NAME=')" == *"Ubuntu"* ]]; then
             if [[ "$(apt list --installed | grep libssl-dev)" == "" ]]; then
                 sudo apt-get install -y libssl-dev
             fi
@@ -154,7 +156,8 @@ if [[  "$(which nvim)" == "" \
     if [[ "$(uname)" == "Darwin" ]]; then
         brew install libtool automake pkg-config gettext
     elif [[ "$(uname)" == "Linux" ]]; then
-        if [[ "$(cat /etc/os-release | grep '^NAME=')" == *"Debian"* ]]; then
+        if [[ "$(cat /etc/os-release | grep '^NAME=')" == *"Debian"*
+           || "$(cat /etc/os-release | grep '^NAME=')" == *"Ubuntu"* ]]; then
             sudo apt-get install -y gettext libtool libtool-bin autoconf automake pkg-config unzip curl doxygen
         fi
     fi
@@ -179,7 +182,8 @@ if [[  "$(which lua)" == "" \
            ${UTILS_ROOT}/man/man1/lua*.1
 
     if [[ "$(uname)" == "Linux" ]]; then
-        if [[ "$(cat /etc/os-release | grep '^NAME=')" == *"Debian"* ]]; then
+        if [[ "$(cat /etc/os-release | grep '^NAME=')" == *"Debian"*
+           || "$(cat /etc/os-release | grep '^NAME=')" == *"Ubuntu"* ]]; then
             sudo apt-get install -y curl libreadline-dev
         fi
     fi
