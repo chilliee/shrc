@@ -25,7 +25,7 @@ fi
 
 
 OS=""
-if [[ "$OS" == "MacOS" ]]; then
+if [[ "$(uname)" == "Darwin" ]]; then
     OS="MacOS"
 elif [[ "$(uname)" == "Linux" ]]; then
     if [[ "$(cat /etc/os-release | grep '^NAME=')" == *"Debian"*
