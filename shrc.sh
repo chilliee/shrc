@@ -4,9 +4,9 @@ export DEVEN_ROOT=${HOME}/workspace
 export UTILS_ROOT=${DEVEN_ROOT}/.utils
 export REPOS_ROOT=${DEVEN_ROOT}/.repos
 
-export NINJA_VERSION="1.10.2"
-export CMAKE_VERSION="3.23.1"
-export NEOVIM_VERSION="0.7.0"
+export NINJA_VERSION="1.11.0"
+export CMAKE_VERSION="3.23.2"
+export NEOVIM_VERSION="0.7.2"
 export LUA_VERSION="5.4.4"
 
 if [[ ! -d "${DEVEN_ROOT}" ]]; then
@@ -78,16 +78,11 @@ if [[  "$(which ninja)" == "" \
     || "$(which ninja)" == "ninja not found" \
     || "$(ninja --version)" != "${NINJA_VERSION}" ]]; then
     rm -f ${UTILS_ROOT}/bin/ninja
-
-    if [[  "$(which python)" == "" \
-        || "$(which python)" == "python not found" ]]; then
-        ln -s $(which python3) ${UTILS_ROOT}/bin/python
-    fi
     
     git clone --branch v${NINJA_VERSION} https://github.com/ninja-build/ninja ${REPOS_ROOT}/ninja && \
     pushd ${REPOS_ROOT}/ninja && \
     
-    ./configure.py --bootstrap && mv ninja ${UTILS_ROOT}/bin && \
+    python3 configure.py --bootstrap && mv ninja ${UTILS_ROOT}/bin && \
     
     popd && rm -rf ${REPOS_ROOT}/ninja
 fi
